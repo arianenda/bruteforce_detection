@@ -2,11 +2,18 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
+	"slices"
 
 	"github.com/spf13/cobra"
 )
+
+var validLogTypes = []string{
+	"windows",
+	"linux",
+}
 
 var bfAnalysisCommand *cobra.Command
 
@@ -17,7 +24,7 @@ func init() {
 		Run:   bfAnalysis,
 	}
 	bfAnalysisCommand.Flags().StringP("filename", "f", "example.log", "Select log file..")
-	bfAnalysisCommand.Flags().StringP("type", "t", "ssh", "Select your log type")
+	bfAnalysisCommand.Flags().StringP("type", "t", "linux", "Select your log type")
 	bfAnalysisCommand.MarkFlagRequired("filename")
 	bfAnalysisCommand.MarkFlagRequired("type")
 }
@@ -38,8 +45,12 @@ func bfAnalysis(cmd *cobra.Command, args []string) {
 
 	defer fileUpload.Close()
 
-	language, _ := cmd.Flags().GetString("type")
-	fmt.Printf("Starting to detect a brute force on %s [%s] file....", filename, language)
+	logType, _ := cmd.Flags().GetString("type")
+	if slices.Contains(validLogTypes, logType) == false {
+		log.Fatalf("Invalid use of type %s, please use one of %v", logType, validLogTypes)
+	}
+
+	fmt.Printf("Starting to detect a brute force on %s [%s] file....", filename, logType)
 }
 
 func main() {
