@@ -15,6 +15,12 @@ var validLogTypes = []string{
 	"linux",
 }
 
+var validFileFormat = []string{
+	".log",
+	".xml",
+	".txt",
+}
+
 var bfAnalysisCommand *cobra.Command
 
 func init() {
@@ -32,15 +38,15 @@ func init() {
 func bfAnalysis(cmd *cobra.Command, args []string) {
 	filename, _ := cmd.Flags().GetString("filename")
 	filePath := "samples/" + filename
+	fileExtension := filepath.Ext(filename)
 	fileUpload, err := os.Open(filePath)
 	if err != nil {
 		fmt.Println("Error opening file", err)
 		os.Exit(-1)
 	}
 
-	if filepath.Ext(filename) != ".xml" || filepath.Ext(filename) != ".txt" && filepath.Ext(filename) != ".log" {
-		fmt.Print("File format unsupported")
-		os.Exit(-1)
+	if slices.Contains(validFileFormat, fileExtension) == false {
+		log.Fatalf("Invalid use of file format %s, file formats are allowed: %v", fileExtension, validFileFormat)
 	}
 
 	defer fileUpload.Close()
