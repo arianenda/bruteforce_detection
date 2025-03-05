@@ -15,12 +15,12 @@ func bruteForceDetection(file *os.File) {
 
 	for {
 		line, err := fileReader.ReadString('\n')
-		parseLine := parser.parseLogLine(line)
-		if value, ok := linuxLog[parseLine.srcIP]; ok {
-			value.bruteForceCount += 1
-			linuxLog[parseLine.srcIP] = value
+		parseLine := parser.ParseLogLine(line)
+		if value, ok := linuxLog[parseLine.SrcIP]; ok {
+			value.BruteForceCount += 1
+			linuxLog[parseLine.SrcIP] = value
 		} else {
-			linuxLog[parseLine.srcIP] = parseLine
+			linuxLog[parseLine.SrcIP] = parseLine
 		}
 		if err == io.EOF {
 			break
@@ -28,8 +28,8 @@ func bruteForceDetection(file *os.File) {
 	}
 
 	for ip, log := range linuxLog {
-		if log.bruteForceCount >= parser.MAX_COUNT {
-			fmt.Printf("Possible brute force attacks from IP: %s with %d login attempts", ip, log.bruteForceCount)
+		if log.BruteForceCount >= parser.MAX_COUNT {
+			fmt.Printf("Possible brute force attacks from IP: %s with %d login attempts", ip, log.BruteForceCount)
 		}
 	}
 }
