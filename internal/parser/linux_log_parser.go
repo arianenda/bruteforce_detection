@@ -11,7 +11,7 @@ type LinuxAuthLog struct {
 
 const (
 	SSH          = "sshd"
-	FAILURE_INFO = "Failed Password"
+	FAILURE_INFO = "Failed password"
 	MAX_COUNT    = 5
 )
 
