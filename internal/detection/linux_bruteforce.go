@@ -9,7 +9,7 @@ import (
 	"github.com/arianenda/bruteforce_detection/internal/parser"
 )
 
-func bruteForceDetection(file *os.File) {
+func BruteForce(file *os.File) {
 	linuxLog := map[string]parser.LinuxAuthLog{}
 	fileReader := bufio.NewReader(file)
 
@@ -26,6 +26,8 @@ func bruteForceDetection(file *os.File) {
 			break
 		}
 	}
+
+	fmt.Println("Map: ", linuxLog)
 
 	for ip, log := range linuxLog {
 		if log.BruteForceCount >= parser.MAX_COUNT {

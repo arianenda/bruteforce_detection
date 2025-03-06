@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"slices"
 
+	"github.com/arianenda/bruteforce_detection/internal/detection"
 	"github.com/spf13/cobra"
 )
 
@@ -56,7 +57,9 @@ func bfAnalysis(cmd *cobra.Command, args []string) {
 		log.Fatalf("Invalid use of type %s, please use one of %v", logType, validLogTypes)
 	}
 
-	fmt.Printf("Starting to detect a brute force on %s [%s] file....", filename, logType)
+	fmt.Printf("Starting to detect a brute force on %s [%s] file....\n", filename, logType)
+	detection.BruteForce(fileUpload)
+
 }
 
 func main() {
