@@ -8,6 +8,7 @@ import (
 	"slices"
 
 	"github.com/arianenda/bruteforce_detection/internal/detection"
+	"github.com/beevik/etree"
 	"github.com/spf13/cobra"
 )
 
@@ -40,25 +41,39 @@ func bfAnalysis(cmd *cobra.Command, args []string) {
 	filename, _ := cmd.Flags().GetString("filename")
 	filePath := "samples/" + filename
 	fileExtension := filepath.Ext(filename)
-	fileUpload, err := os.Open(filePath)
-	if err != nil {
-		fmt.Println("Error opening file", err)
-		os.Exit(-1)
-	}
+	logType, _ := cmd.Flags().GetString("type")
 
 	if slices.Contains(validFileFormat, fileExtension) == false {
 		log.Fatalf("Invalid use of file format %s, file formats are allowed: %v", fileExtension, validFileFormat)
 	}
 
-	defer fileUpload.Close()
-
-	logType, _ := cmd.Flags().GetString("type")
 	if slices.Contains(validLogTypes, logType) == false {
 		log.Fatalf("Invalid use of type %s, please use one of %v", logType, validLogTypes)
 	}
 
+	switch logType {
+	case "linux":
+		fileUpload, err := os.Open(filePath)
+
+		if err != nil {
+			fmt.Println("Error opening file", err)
+			os.Exit(-1)
+		}
+
+		defer fileUpload.Close()
+		detection.BruteForce(fileUpload)
+	case "windows":
+		doc := etree.NewDocument()
+		if err := doc.ReadFromFile(filePath); err != nil {
+			log.Fatalf("Error reading XML file: %v", err)
+		}
+
+		detection.WindowsBruteForceDetection(doc)
+	default:
+		log.Fatalf("Unknown file types")
+	}
+
 	fmt.Printf("Starting to detect a brute force on %s [%s] file....\n", filename, logType)
-	detection.BruteForce(fileUpload)
 
 }
 
