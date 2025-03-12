@@ -21,6 +21,7 @@ func BruteForce(file *os.File) {
 			value.BruteForceCount += 1
 			linuxLog[parseLine.SrcIP] = value
 		} else {
+			parseLine.BruteForceCount = 1
 			linuxLog[parseLine.SrcIP] = parseLine
 		}
 		if err == io.EOF {
